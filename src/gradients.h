@@ -1,4 +1,5 @@
 #include "largeVis.h"
+#include "largeVis_types.h"
 
 class Gradient {
 protected:

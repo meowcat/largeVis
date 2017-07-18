@@ -1,4 +1,5 @@
 #include "largeVis.h"
+#include "largeVis_types.h"
 #include "alias.h"
 #include "progress.hpp"
 #include "gradients.h"

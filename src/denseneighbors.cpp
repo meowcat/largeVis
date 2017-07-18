@@ -1,36 +1,11 @@
 #include "neighbors.h"
+#include "denseneighbors.h"
 #include "distance.h"
+#include "largeVis_types.h"
 
 using namespace Rcpp;
 using namespace std;
 using namespace arma;
-
-class DenseAnnoySearch : public AnnoySearch<arma::Mat<double>, arma::Col<double>> {
-protected:
-	virtual vec hyperplane(const ivec& indices) {
-		const vertexidxtype I = indices.n_elem;
-		vec direction = vec(I);
-
-		const vertexidxtype idx1 = sample(I);
-		vertexidxtype idx2 = sample(I - 1);
-		idx2 = (idx2 >= idx1) ? (idx2 + 1) % I : idx2;
-
-		const vec x2 = data.col(indices[idx1]);
-		const vec x1 = data.col(indices[idx2]);
-			// Get hyperplane
-		const vec m =  (x1 + x2) / 2; // Base point of hyperplane
-		const vec d = x1 - x2;
-		const vec v =  d / as_scalar(norm(d, 2)); // unit vector
-
-		for (vertexidxtype i = 0; i != I; i++) {
-			const vec X = data.col(indices[i]);
-			direction[i] = dot((X - m), v);
-		}
-		return direction;
-	}
-public:
-	DenseAnnoySearch(const mat& data, const kidxtype& K, Progress& p) : AnnoySearch(data, K, p) {}
-};
 
 class DenseEuclidean : public DenseAnnoySearch {
 protected:
@@ -51,16 +26,19 @@ public:
 };
 
 
+
+
 // [[Rcpp::export]]
 arma::imat searchTrees(const int& threshold,
                        const int& n_trees,
                        const int& K,
                        const int& maxIter,
                        const arma::mat& data,
-                       const std::string& distMethod,
+                       const SEXP distMethod,
                        Rcpp::Nullable< NumericVector > seed,
                        Rcpp::Nullable< NumericVector > threads,
-                       bool verbose) {
+                       bool verbose
+                         ) {
 #ifdef _OPENMP
 	checkCRAN(threads);
 #endif
@@ -68,13 +46,24 @@ arma::imat searchTrees(const int& threshold,
 
   Progress p((N * n_trees) + (3 * N) + (N * maxIter), verbose);
 
-  const mat dataMat = (distMethod.compare(string("Cosine")) == 0) ? normalise(data) : mat();
 
 	DenseAnnoySearch* annoy;
-	if (distMethod.compare(string("Cosine")) == 0) {
-		annoy = new DenseCosine(dataMat, K, p);
-	} else {
-		annoy = new DenseEuclidean(data, K, p);
+
+	if(TYPEOF(distMethod) == STRSXP)
+	{
+	  std::string distMethodStr = Rcpp::as<std::string>(distMethod);
+	  const mat dataMat = (distMethodStr.compare(string("Cosine")) == 0) ? normalise(data) : mat();
+
+	  if (distMethodStr.compare(string("Cosine")) == 0) {
+	    annoy = new DenseCosine(dataMat, K, p);
+	  } else {
+	    annoy = new DenseEuclidean(data, K, p);
+	  }
+	}
+	else // this assumes that it is an XPtr . How to check this? if(TYPEOF(distMethod) == ???)
+	{
+	  Rcpp::XPtr<DenseCustomFactory> dc(distMethod);
+	  annoy = dc->getDC(data, K, p);
 	}
 
 	annoy->setSeed(seed);

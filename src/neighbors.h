@@ -1,6 +1,7 @@
 #ifndef _LARGEVISNEIGHBORS
 #define _LARGEVISNEIGHBORS
 #include "largeVis.h"
+#include "largeVis_types.h"
 #include <vector>
 #include <memory>
 #include "progress.hpp"

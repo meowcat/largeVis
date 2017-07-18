@@ -19,7 +19,6 @@ using namespace arma;
 /*
  * Global types
  */
-typedef double distancetype;
 typedef double coordinatetype;
 
 typedef sword vertexidxtype;
@@ -28,6 +27,7 @@ typedef uword iterationtype;
 
 typedef unsigned int dimidxtype;
 typedef unsigned int kidxtype;
+
 
 #ifdef _OPENMP
 void checkCRAN(Rcpp::Nullable<Rcpp::NumericVector> threads);
