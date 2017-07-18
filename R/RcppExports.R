@@ -45,6 +45,14 @@ optics_cpp <- function(edges, neighbors, eps, minPts, useQueue, verbose) {
     .Call('_largeVis_optics_cpp', PACKAGE = 'largeVis', edges, neighbors, eps, minPts, useQueue, verbose)
 }
 
+ramclustDist <- function(i, j, sr, st) {
+    .Call('_largeVis_ramclustDist', PACKAGE = 'largeVis', i, j, sr, st)
+}
+
+ramclustDistance <- function(sr, st) {
+    .Call('_largeVis_ramclustDistance', PACKAGE = 'largeVis', sr, st)
+}
+
 searchTreesCSparse <- function(threshold, n_trees, K, maxIter, i, p, x, distMethod, seed, threads, verbose) {
     .Call('_largeVis_searchTreesCSparse', PACKAGE = 'largeVis', threshold, n_trees, K, maxIter, i, p, x, distMethod, seed, threads, verbose)
 }

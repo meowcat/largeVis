@@ -185,6 +185,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ramclustDist
+distancetype ramclustDist(const arma::vec& i, const arma::vec& j, const double sr, const double st);
+RcppExport SEXP _largeVis_ramclustDist(SEXP iSEXP, SEXP jSEXP, SEXP srSEXP, SEXP stSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type i(iSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type j(jSEXP);
+    Rcpp::traits::input_parameter< const double >::type sr(srSEXP);
+    Rcpp::traits::input_parameter< const double >::type st(stSEXP);
+    rcpp_result_gen = Rcpp::wrap(ramclustDist(i, j, sr, st));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ramclustDistance
+Rcpp::XPtr<DenseCustomFactory> ramclustDistance(double sr, double st);
+RcppExport SEXP _largeVis_ramclustDistance(SEXP srSEXP, SEXP stSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type sr(srSEXP);
+    Rcpp::traits::input_parameter< double >::type st(stSEXP);
+    rcpp_result_gen = Rcpp::wrap(ramclustDistance(sr, st));
+    return rcpp_result_gen;
+END_RCPP
+}
 // searchTreesCSparse
 arma::imat searchTreesCSparse(const int& threshold, const int& n_trees, const int& K, const int& maxIter, const arma::uvec& i, const arma::uvec& p, const arma::vec& x, const std::string& distMethod, Rcpp::Nullable< Rcpp::NumericVector> seed, Rcpp::Nullable< Rcpp::NumericVector> threads, bool verbose);
 RcppExport SEXP _largeVis_searchTreesCSparse(SEXP thresholdSEXP, SEXP n_treesSEXP, SEXP KSEXP, SEXP maxIterSEXP, SEXP iSEXP, SEXP pSEXP, SEXP xSEXP, SEXP distMethodSEXP, SEXP seedSEXP, SEXP threadsSEXP, SEXP verboseSEXP) {
