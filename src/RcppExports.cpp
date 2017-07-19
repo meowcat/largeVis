@@ -200,7 +200,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ramclustDistance
-Rcpp::XPtr<DenseCustomFactory> ramclustDistance(double sr, double st);
+Rcpp::XPtr<DenseAnnoySearchProvider> ramclustDistance(double sr, double st);
 RcppExport SEXP _largeVis_ramclustDistance(SEXP srSEXP, SEXP stSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

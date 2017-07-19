@@ -45,14 +45,18 @@ randomProjectionTreeSearch.matrix <- function(x,
                                        verbose = getOption("verbose", TRUE)) {
   if (verbose) cat("Searching for neighbors.\n")
 
-  if (distance_method == "Cosine") x <- x / rowSums(x)
+  if (typeof(distance_method) == "character") 
+    if (distance_method == "Cosine") x <- x / rowSums(x)
+    
+  if(!typeof(distance_method) == "externalptr")
+    distance_method <- as.character(distance_method)
 
   knns <- searchTrees(threshold = as.integer(tree_threshold),
                       n_trees = as.integer(n_trees),
                       K = as.integer(K),
                       maxIter = as.integer(max_iter),
                       data = x,
-                      distMethod = as.character(distance_method),
+                      distMethod = distance_method,
   										seed = seed,
   										threads = threads,
                       verbose = as.logical(verbose))

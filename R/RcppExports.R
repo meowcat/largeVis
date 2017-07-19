@@ -49,6 +49,7 @@ ramclustDist <- function(i, j, sr, st) {
     .Call('_largeVis_ramclustDist', PACKAGE = 'largeVis', i, j, sr, st)
 }
 
+#' @export
 ramclustDistance <- function(sr, st) {
     .Call('_largeVis_ramclustDistance', PACKAGE = 'largeVis', sr, st)
 }

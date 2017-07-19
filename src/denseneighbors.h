@@ -33,28 +33,9 @@ public:
 };
 
 
-class DenseCustom : public DenseAnnoySearch {
-protected:
-  distancefuntype _distanceFunction;
-  virtual distancetype distanceFunction(const Col<double>& x_i, const Col<double>& x_j) const {
-    return (*_distanceFunction)(x_i, x_j);
-  }
-public:
-  DenseCustom(const Mat<double>& data, const kidxtype& K, Progress& p,
-              distancefuntype distanceFunction
-  ) : DenseAnnoySearch(data, K, p), _distanceFunction(distanceFunction) {}
+class DenseAnnoySearchProvider : public AnnoySearchProvider<DenseAnnoySearch>
+{
 };
 
-
-class DenseCustomFactory {
-protected:
-  distancefuntype _distanceFunction;
-public:
-  DenseCustomFactory(distancefuntype distanceFunction) : _distanceFunction(distanceFunction) {}
-  virtual DenseCustom * getDC(const Mat<double>& data, const kidxtype& K, Progress& p)
-  {
-    return(new DenseCustom(data, K, p, _distanceFunction));
-  }
-};
 
 #endif

@@ -69,7 +69,6 @@ protected:
 	unsigned int threshold = 0;
 	int threshold2 = 0;
 
-	virtual double distanceFunction(const V& x_i, const V& x_j) const = 0;
 	virtual vec hyperplane(const ivec& indices) = 0;
 
 	inline long sample(const long& i) {
@@ -77,6 +76,10 @@ protected:
 	}
 
 public:
+  typedef M Mtype;
+  typedef V Vtype;
+  virtual double distanceFunction(const V& x_i, const V& x_j) const = 0;
+  
 	AnnoySearch(const M& data, const kidxtype& K, Progress& p) : data{data}, K{K}, N(data.n_cols), p(p) {
 		treeNeighborhoods = new Neighborhood[N];
 		for (vertexidxtype i = 0; i != N; ++i) treeNeighborhoods[i] = Neighborhood();
@@ -95,4 +98,17 @@ public:
 	void exploreNeighborhood(const unsigned int& maxIter);
 	imat sortAndReturn();
 };
+
+// A DistanceProvider is needed because the search functions instantiate and destroy the AnnoySearch.
+// The getDistanceProvider is used to get just a DistanceProvider instance with a distance function, used in distance.cpp.
+// Implementation via XPtr or other gc'd pointers would require more changes and probably also breaking interface changes.
+template<class T>
+class AnnoySearchProvider {
+public:
+  AnnoySearchProvider() {};
+  virtual T * getAnnoySearch(const typename T::Mtype& data, const kidxtype& K, Progress& p) = 0;
+  virtual double distanceFunction(const typename T::Vtype& x_i, const typename T::Vtype& x_j) const =0;
+  virtual AnnoySearchProvider * getAnnoySearchProvider() =0;
+};
+
 #endif
