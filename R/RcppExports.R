@@ -13,6 +13,15 @@ dbscan_cpp <- function(edges, neighbors, eps, minPts, verbose) {
     .Call('_largeVis_dbscan_cpp', PACKAGE = 'largeVis', edges, neighbors, eps, minPts, verbose)
 }
 
+#' Instantiate an AnnoySearch for the given distMethod
+#' 
+#' This instantiates a DenseAnnoySearch based on distMethod input.
+#' distMethod is either a Rcpp::XPtr<DenseDistanceProvider> or a character
+#' If this is a DenseDistanceProvider, use the provided getAnnoySearch to get an AnnoySearch instance,
+#' if this is one of the predefined types (Cosine or Euclidean), instantiate it directly without going
+#' past a DistanceProvider.
+NULL
+
 searchTrees <- function(threshold, n_trees, K, maxIter, data, distMethod, seed, threads, verbose) {
     .Call('_largeVis_searchTrees', PACKAGE = 'largeVis', threshold, n_trees, K, maxIter, data, distMethod, seed, threads, verbose)
 }
@@ -45,13 +54,14 @@ optics_cpp <- function(edges, neighbors, eps, minPts, useQueue, verbose) {
     .Call('_largeVis_optics_cpp', PACKAGE = 'largeVis', edges, neighbors, eps, minPts, useQueue, verbose)
 }
 
-ramclustDist <- function(i, j, sr, st) {
-    .Call('_largeVis_ramclustDist', PACKAGE = 'largeVis', i, j, sr, st)
+#' @export
+ramclustDist <- function(i, j, sr, st, maxt, maxdist) {
+    .Call('_largeVis_ramclustDist', PACKAGE = 'largeVis', i, j, sr, st, maxt, maxdist)
 }
 
 #' @export
-ramclustDistance <- function(sr, st) {
-    .Call('_largeVis_ramclustDistance', PACKAGE = 'largeVis', sr, st)
+ramclustDistance <- function(sr, st, maxt, maxdist) {
+    .Call('_largeVis_ramclustDistance', PACKAGE = 'largeVis', sr, st, maxt, maxdist)
 }
 
 searchTreesCSparse <- function(threshold, n_trees, K, maxIter, i, p, x, distMethod, seed, threads, verbose) {
@@ -62,3 +72,7 @@ searchTreesTSparse <- function(threshold, n_trees, K, maxIter, i, j, x, distMeth
     .Call('_largeVis_searchTreesTSparse', PACKAGE = 'largeVis', threshold, n_trees, K, maxIter, i, j, x, distMethod, seed, threads, verbose)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_largeVis_RcppExport_registerCCallable', PACKAGE = 'largeVis')
+})

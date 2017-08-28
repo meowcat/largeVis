@@ -2,8 +2,11 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include "largeVis_types.h"
+#include "../inst/include/largeVis.h"
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
+#include <string>
+#include <set>
 
 using namespace Rcpp;
 
@@ -62,7 +65,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // fastDistance
-arma::vec fastDistance(const IntegerVector is, const IntegerVector js, const arma::mat& data, const std::string& distMethod, Rcpp::Nullable<Rcpp::NumericVector> threads, bool verbose);
+arma::vec fastDistance(const IntegerVector is, const IntegerVector js, const arma::mat& data, const SEXP distMethod, Rcpp::Nullable<Rcpp::NumericVector> threads, bool verbose);
 RcppExport SEXP _largeVis_fastDistance(SEXP isSEXP, SEXP jsSEXP, SEXP dataSEXP, SEXP distMethodSEXP, SEXP threadsSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -70,7 +73,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const IntegerVector >::type is(isSEXP);
     Rcpp::traits::input_parameter< const IntegerVector >::type js(jsSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type distMethod(distMethodSEXP);
+    Rcpp::traits::input_parameter< const SEXP >::type distMethod(distMethodSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::NumericVector> >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     rcpp_result_gen = Rcpp::wrap(fastDistance(is, js, data, distMethod, threads, verbose));
@@ -186,8 +189,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ramclustDist
-distancetype ramclustDist(const arma::vec& i, const arma::vec& j, const double sr, const double st);
-RcppExport SEXP _largeVis_ramclustDist(SEXP iSEXP, SEXP jSEXP, SEXP srSEXP, SEXP stSEXP) {
+distancetype ramclustDist(const arma::vec& i, const arma::vec& j, const double sr, const double st, const double maxt, const double maxdist);
+RcppExport SEXP _largeVis_ramclustDist(SEXP iSEXP, SEXP jSEXP, SEXP srSEXP, SEXP stSEXP, SEXP maxtSEXP, SEXP maxdistSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -195,19 +198,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type j(jSEXP);
     Rcpp::traits::input_parameter< const double >::type sr(srSEXP);
     Rcpp::traits::input_parameter< const double >::type st(stSEXP);
-    rcpp_result_gen = Rcpp::wrap(ramclustDist(i, j, sr, st));
+    Rcpp::traits::input_parameter< const double >::type maxt(maxtSEXP);
+    Rcpp::traits::input_parameter< const double >::type maxdist(maxdistSEXP);
+    rcpp_result_gen = Rcpp::wrap(ramclustDist(i, j, sr, st, maxt, maxdist));
     return rcpp_result_gen;
 END_RCPP
 }
 // ramclustDistance
-Rcpp::XPtr<DenseAnnoySearchProvider> ramclustDistance(double sr, double st);
-RcppExport SEXP _largeVis_ramclustDistance(SEXP srSEXP, SEXP stSEXP) {
+SEXP ramclustDistance(double sr, double st, double maxt, double maxdist);
+RcppExport SEXP _largeVis_ramclustDistance(SEXP srSEXP, SEXP stSEXP, SEXP maxtSEXP, SEXP maxdistSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type sr(srSEXP);
     Rcpp::traits::input_parameter< double >::type st(stSEXP);
-    rcpp_result_gen = Rcpp::wrap(ramclustDistance(sr, st));
+    Rcpp::traits::input_parameter< double >::type maxt(maxtSEXP);
+    Rcpp::traits::input_parameter< double >::type maxdist(maxdistSEXP);
+    rcpp_result_gen = Rcpp::wrap(ramclustDistance(sr, st, maxt, maxdist));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -252,4 +259,18 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(searchTreesTSparse(threshold, n_trees, K, maxIter, i, j, x, distMethod, seed, threads, verbose));
     return rcpp_result_gen;
 END_RCPP
+}
+
+// validate (ensure exported C++ functions exist before calling them)
+static int _largeVis_RcppExport_validate(const char* sig) { 
+    static std::set<std::string> signatures;
+    if (signatures.empty()) {
+    }
+    return signatures.find(sig) != signatures.end();
+}
+
+// registerCCallable (register entry points for exported C++ functions)
+RcppExport SEXP _largeVis_RcppExport_registerCCallable() { 
+    R_RegisterCCallable("largeVis", "_largeVis_RcppExport_validate", (DL_FUNC)_largeVis_RcppExport_validate);
+    return R_NilValue;
 }

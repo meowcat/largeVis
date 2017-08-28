@@ -20,13 +20,17 @@ buildEdgeMatrix <- function(data,
 	indices <- neighborsToVectors(neighbors)
 	distances <- distance(i = indices$i, j = indices$j, x = data, distance_method = distance_method, verbose = verbose)
 	distances <- pmax(distances, 1e-5)
+	if(is.character(distance_method))
+	  distance_method_out <- tolower(distance_method)
+	else
+	  distance_method_out = "custom"
 	ret <- structure(list(
 		        i = indices$i + 1,
 						j = indices$j + 1,
 						x = as.vector(distances)),
 						dims = c(ncol(data), ncol(data)),
 						call = sys.call(),
-						Metric = tolower(distance_method))
+						Metric = distance_method_out)
 	class(ret) <- "edgematrix"
 	ret
 }

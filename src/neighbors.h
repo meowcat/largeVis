@@ -1,3 +1,4 @@
+// [[Rcpp::interfaces(r, cpp)]]
 #ifndef _LARGEVISNEIGHBORS
 #define _LARGEVISNEIGHBORS
 #include "largeVis.h"
@@ -33,6 +34,8 @@ public:
 
 // V is the type of arma vector e.g., vec
 // M is the type of arma matrix e.g., mat, sp_mat
+
+// [[Rcpp::export]]
 template<class M, class V>
 class AnnoySearch {
 private:
@@ -102,6 +105,7 @@ public:
 // A DistanceProvider is needed because the search functions instantiate and destroy the AnnoySearch.
 // The getDistanceProvider is used to get just a DistanceProvider instance with a distance function, used in distance.cpp.
 // Implementation via XPtr or other gc'd pointers would require more changes and probably also breaking interface changes.
+// [[Rcpp::export]]
 template<class T>
 class AnnoySearchProvider {
 public:
@@ -109,6 +113,7 @@ public:
   virtual T * getAnnoySearch(const typename T::Mtype& data, const kidxtype& K, Progress& p) = 0;
   virtual double distanceFunction(const typename T::Vtype& x_i, const typename T::Vtype& x_j) const =0;
   virtual AnnoySearchProvider * getAnnoySearchProvider() =0;
+  virtual ~AnnoySearchProvider() {};
 };
 
 #endif

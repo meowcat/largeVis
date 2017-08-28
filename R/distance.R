@@ -34,7 +34,10 @@ distance.matrix <- function(x,
                        distance_method,
   										 threads,
                        verbose)
-  attr(ret, "method") <- tolower(distance_method)
+  if(is.character(distance_method))
+    attr(ret, "method") <- tolower(distance_method)
+  else
+    attr(ret, "method") <- "custom"
   ret
 }
 

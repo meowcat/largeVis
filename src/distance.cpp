@@ -1,6 +1,7 @@
 #include "largeVis.h"
 #include "distance.h"
 #include <progress.hpp>
+#include "denseneighbors.h"
 
 distancetype relDist(const arma::vec& i, const arma::vec& j) {
   const dimidxtype D = i.n_elem;
@@ -45,7 +46,7 @@ distancetype sparseRelDist(const sp_mat& i, const sp_mat& j) {
 arma::vec fastDistance(const IntegerVector is,
                        const IntegerVector js,
                        const arma::mat& data,
-                       const std::string& distMethod,
+                       const SEXP distMethod,
                        Rcpp::Nullable<Rcpp::NumericVector> threads,
                        bool verbose) {
 #ifdef _OPENMP
@@ -53,14 +54,35 @@ arma::vec fastDistance(const IntegerVector is,
 #endif
   Progress p(is.size(), verbose);
   vec xs = vec(is.size());
-  distancetype (*distanceFunction)(const arma::vec& x_i, const arma::vec& x_j);
-  if (distMethod.compare(std::string("Euclidean")) == 0) distanceFunction = dist;
-  else if (distMethod.compare(std::string("Cosine")) == 0) distanceFunction = cosDist;
+  
+  if(TYPEOF(distMethod) == STRSXP)
+  {
+    std::string distMethodStr = Rcpp::as<std::string>(distMethod);
+    
+    
+    distancetype (*distanceFunction)(const arma::vec& x_i, const arma::vec& x_j);
+    if (distMethodStr.compare(std::string("Euclidean")) == 0) distanceFunction = dist;
+    else if (distMethodStr.compare(std::string("Cosine")) == 0) distanceFunction = cosDist;
 #ifdef _OPENMP
 #pragma omp parallel for shared (xs)
 #endif
-  for (R_xlen_t i=0; i < is.length(); i++) if (p.increment()) xs[i] =
-    distanceFunction(data.col(is[i]), data.col(js[i]));
+    for (R_xlen_t i=0; i < is.length(); i++) if (p.increment()) xs[i] =
+      distanceFunction(data.col(is[i]), data.col(js[i]));
+    
+
+  }
+  else // this assumes that it is an XPtr . How to check this? if(TYPEOF(distMethod) == ???)
+  {
+    Rcpp::XPtr<DenseAnnoySearchProvider> dc(distMethod);
+#ifdef _OPENMP
+#pragma omp parallel for shared (xs)
+#endif
+    for (R_xlen_t i=0; i < is.length(); i++) if (p.increment()) xs[i] =
+      dc->distanceFunction(data.col(is[i]), data.col(js[i]));
+  }
+  
+  
+  
   return xs;
 };
 
@@ -72,6 +94,10 @@ vec fastSparseDistance(const ivec& is,
 
   Progress p(is.size(), verbose);
   vec xs = vec(is.size());
+  
+  
+  
+  
   distancetype (*distanceFunction)(
       const sp_mat& x_i,
       const sp_mat& x_j);
